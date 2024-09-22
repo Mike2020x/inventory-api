@@ -1,4 +1,6 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import customersRouter from "./routes/customer";
+import userRouter from "./routes/user";
 
 require("dotenv").config();
 const cors = require("cors");
@@ -13,23 +15,6 @@ app.listen(PORT, () => {
   // Start the server and listen on the specified port
   console.log(`Server is running on http://localhost:${PORT}`); // Log a message indicating the server is running
 });
-
-// Create an API
-// GET, POST,PUT,PATCH,DELETE
-// http:localhost:8000/customers
-app.get("/customers", async (req: Request, res: Response) => {
-  const customers = [
-    {
-      name: "Mike Gonzalez",
-      email: "mike.doe@example.com",
-      phone: "+1234567890",
-    },
-    {
-      name: "Kai Smith",
-      email: "joel.smith@example.com",
-      phone: "+0987654321",
-    },
-  ];
-
-  return res.status(200).json(customers);
-});
+//customer
+app.use("/api/v1", customersRouter);
+app.use("/api/v1", userRouter);
