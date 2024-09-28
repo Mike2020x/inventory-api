@@ -138,29 +138,29 @@ model Category {
 }
 
 model Product {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   description   String?
   batchNumber   String?
-  barCode       String?  @unique
-  image         String?
+  barCode       String?   @unique
+  image         String?   @default("https://via.placeholder.com/150")
   tax           Int?
   alertQuantity Int
   stockQuantity Int
   price         Int
   buyingPrice   Int?
-  sku           String   @unique
-  productCode   String   @unique
-  slug          String   @unique
-  supplierId    String   @db.ObjectId
-  unitId        String   @db.ObjectId
-  brandId       String   @db.ObjectId
-  categoryId    String   @db.ObjectId
-  expiryDate    DateTime
-  unit          Unit     @relation(fields: [unitId], references: [id])
-  brand         Brand    @relation(fields: [brandId], references: [id])
-  category      Category @relation(fields: [categoryId], references: [id])
-  supplier      Supplier @relation(fields: [supplierId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  sku           String    @unique
+  productCode   String    @unique
+  slug          String    @unique
+  supplierId    String    @db.ObjectId
+  unitId        String    @db.ObjectId
+  brandId       String    @db.ObjectId
+  categoryId    String    @db.ObjectId
+  expiryDate    DateTime? @default("2025-12-31T23:59:59Z")
+  unit          Unit      @relation(fields: [unitId], references: [id])
+  brand         Brand     @relation(fields: [brandId], references: [id])
+  category      Category  @relation(fields: [categoryId], references: [id])
+  supplier      Supplier  @relation(fields: [supplierId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

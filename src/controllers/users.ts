@@ -268,6 +268,7 @@ export async function updateUserPasswordById(req: Request, res: Response) {
     const { password: savedPassword, ...others } = updatedUser;
     return res.status(200).json({
       data: others,
+      success: true,
       error: null,
     });
   } catch (error) {
