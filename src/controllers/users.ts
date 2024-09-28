@@ -136,31 +136,80 @@ export async function getUserById(req: Request, res: Response) {
   }
 }
 export async function updateUserById(req: Request, res: Response) {
-  const { id } = req.params;
-  const {
-    email,
-    username,
-    firstName,
-    lastName,
-    phone,
-    dob,
-    gender,
-    role,
-    image,
-  } = req.body;
-
   try {
-    const user = await db.user.findUnique({
+    const { id } = req.params;
+    const {
+      email,
+      username,
+      firstName,
+      lastName,
+      password,
+      phone,
+      dob,
+      gender,
+      role,
+      image,
+    } = req.body;
+    const existingUser = await db.user.findUnique({
       where: {
         id,
       },
     });
-    if (!user) {
+    if (!existingUser) {
       return res.status(404).json({
         data: null,
         error: "User not found",
       });
     }
+
+    if (email && email !== existingUser.email) {
+      const existingUserByEmail = await db.user.findUnique({
+        where: {
+          email,
+        },
+      });
+      if (existingUserByEmail) {
+        res.status(409).json({
+          error: `Email  ${email} already taken`,
+          data: null,
+        });
+        return;
+      }
+    }
+    if (phone && phone !== existingUser.phone) {
+      const existingUserByPhone = await db.user.findUnique({
+        where: {
+          phone,
+        },
+      });
+      if (existingUserByPhone) {
+        res.status(409).json({
+          error: `Phone number ${phone}  is already taken`,
+          data: null,
+        });
+        return;
+      }
+    }
+    if (username && username !== existingUser.username) {
+      const existingUserByUsername = await db.user.findUnique({
+        where: {
+          username,
+        },
+      });
+      if (existingUserByUsername) {
+        res.status(409).json({
+          error: `User  ${username} is already taken`,
+          data: null,
+        });
+        return;
+      }
+    }
+    //hash the password
+    let hashedPassword = existingUser.password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+    //update the user
     const updatedUser = await db.user.update({
       where: {
         id,
@@ -175,9 +224,10 @@ export async function updateUserById(req: Request, res: Response) {
         gender,
         role,
         image,
+        password: hashedPassword,
       },
     });
-    const { password, ...others } = updatedUser;
+    const { password: userPass, ...others } = updatedUser;
     return res.status(200).json({
       data: others,
       error: null,

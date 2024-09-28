@@ -1,7 +1,6 @@
 import express from "express";
 import {
   getCustomers,
-  //   getCustomerById,
   createCustomer,
   getCustomerById,
 } from "@/controllers/customers";
